@@ -50,7 +50,7 @@ class _GameScreenState extends State<GameScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // WordTile(word: currentWord, guessedLetters: guessedLetters),
+            WordTile(word: currentWord),
             SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -95,14 +95,14 @@ class _GameScreenState extends State<GameScreen> {
     });
 
     // Verifica si la letra está en la palabra objetivo
-    // if (currentWord.word.contains(letter.toLowerCase())) {
-    //   currentWord.updateGuessedLetters(letter);
-    // }
+    if (currentWord.word.contains(letter.toLowerCase())) {
+      currentWord.updateGuessedLetters(letter);
+    }
 
-    // // Verifica si el jugador ha adivinado la palabra
-    // if (currentWord.isWordGuessed()) {
-    //   // Aquí puedes agregar lógica adicional cuando se adivina la palabra
-    //   print('¡Has adivinado la palabra!');
-    // }
+    // Verifica si el jugador ha adivinado la palabra
+    if (currentWord.isWordGuessed()) {
+      // Aquí puedes agregar lógica adicional cuando se adivina la palabra
+      print('¡Has adivinado la palabra!');
+    }
   }
 }
