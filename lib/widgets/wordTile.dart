@@ -4,17 +4,17 @@ import '../word.dart';
 class WordTile extends StatelessWidget {
   final Word word;
 
-  WordTile({required this.word});
+  const WordTile({super.key, required this.word});
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text(
+        const Text(
           'Palabra a Adivinar:',
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
         Wrap(
           alignment: WrapAlignment.center,
           children: buildLetterTiles(),
@@ -30,8 +30,8 @@ class WordTile extends StatelessWidget {
       String letter = entry.value;
 
       return Container(
-        padding: EdgeInsets.all(8),
-        margin: EdgeInsets.all(5),
+        padding: const EdgeInsets.all(8),
+        margin: const EdgeInsets.all(5),
         decoration: BoxDecoration(
           border: Border.all(color: Colors.black),
           borderRadius: BorderRadius.circular(5),
@@ -39,7 +39,7 @@ class WordTile extends StatelessWidget {
         ),
         child: Text(
           letter,
-          style: TextStyle(fontSize: 20),
+          style: const TextStyle(fontSize: 20),
         ),
       );
     }).toList();

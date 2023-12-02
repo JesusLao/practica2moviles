@@ -1,9 +1,13 @@
+// ignore_for_file: library_private_types_in_public_api, prefer_const_constructors
+
 import 'package:flutter/material.dart';
 import 'dart:math'; // Importa la biblioteca de Dart para números aleatorios
 import '../word.dart'; // Importa el modelo Word
 import '../widgets/wordTile.dart'; // Importa el widget WordTile
 
 class GameScreen extends StatefulWidget {
+  const GameScreen({super.key});
+
   @override
   _GameScreenState createState() => _GameScreenState();
 }
@@ -11,6 +15,7 @@ class GameScreen extends StatefulWidget {
 class _GameScreenState extends State<GameScreen> {
   late Word currentWord;
   TextEditingController wordInputController = TextEditingController();
+  String feedbackMessage = '';
 
   @override
   void initState() {
@@ -30,7 +35,7 @@ class _GameScreenState extends State<GameScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Wordle Game'),
+        title: const Text('Wordle Game'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -38,29 +43,43 @@ class _GameScreenState extends State<GameScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             WordTile(word: currentWord),
+            const SizedBox(height: 20),
+            feedbackMessage.isNotEmpty
+                ? Text(
+                    feedbackMessage,
+                    style: TextStyle(
+                      color:
+                          feedbackMessage.contains('¡Has adivinado la palabra!')
+                              ? Colors.green
+                              : Colors.red,
+                    ),
+                  )
+                : Container(),
             SizedBox(height: 20),
             TextField(
               controller: wordInputController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Ingresa una palabra',
               ),
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
                 // Procesa la palabra ingresada por el usuario
+                feedbackMessage = '';
                 processWord(wordInputController.text);
               },
-              child: Text('Adivinar Palabra'),
+              child: const Text('Adivinar Palabra'),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
+                feedbackMessage = '';
                 // Reinicia el juego
                 startNewGame();
               },
-              child: Text('Reiniciar Juego'),
+              child: const Text('Reiniciar Juego'),
             ),
           ],
         ),
@@ -74,11 +93,12 @@ class _GameScreenState extends State<GameScreen> {
       currentWord.updateGuessedWord(word);
       if (currentWord.isWordGuessed()) {
         // Aquí puedes agregar lógica adicional cuando se adivina la palabra
-        print('¡Has adivinado la palabra!');
+        feedbackMessage = '¡Has adivinado la palabra!';
       }
     } else {
       // Aquí puedes manejar la lógica cuando la longitud de la palabra no coincide
-      print('La longitud de la palabra no coincide');
+
+      feedbackMessage = 'La longitud de la palabra no coincide.';
     }
 
     // Limpia el campo de entrada
