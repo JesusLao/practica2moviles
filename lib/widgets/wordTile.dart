@@ -25,13 +25,17 @@ class WordTile extends StatelessWidget {
 
   List<Widget> buildLetterTiles() {
     List<String> displayWord = word.getDisplayWord();
-    return displayWord.map((letter) {
+    return displayWord.asMap().entries.map((entry) {
+      int index = entry.key;
+      String letter = entry.value;
+
       return Container(
         padding: EdgeInsets.all(8),
         margin: EdgeInsets.all(5),
         decoration: BoxDecoration(
           border: Border.all(color: Colors.black),
           borderRadius: BorderRadius.circular(5),
+          color: getLetterColor(index, letter),
         ),
         child: Text(
           letter,
@@ -39,5 +43,19 @@ class WordTile extends StatelessWidget {
         ),
       );
     }).toList();
+  }
+
+  Color? getLetterColor(int index, String letter) {
+    bool isGuessed = word.guessedLetters.contains(letter.toLowerCase());
+    if (isGuessed) {
+      if (word.isLetterInCorrectPosition(index, letter)) {
+        // Letra en la posición correcta (verde)
+        return Colors.green;
+      } else {
+        // Letra en otra posición (amarillo)
+        return Colors.yellow;
+      }
+    }
+    return null; // No resaltar letras no adivinadas
   }
 }

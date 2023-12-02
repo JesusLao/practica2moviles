@@ -9,9 +9,8 @@ class GameScreen extends StatefulWidget {
 }
 
 class _GameScreenState extends State<GameScreen> {
-  late Word currentWord; // Palabra actual
-  late List<String> availableLetters; // Letras disponibles para adivinar
-  late List<String> guessedLetters; // Letras adivinadas por el usuario
+  late Word currentWord;
+  TextEditingController wordInputController = TextEditingController();
 
   @override
   void initState() {
@@ -19,23 +18,11 @@ class _GameScreenState extends State<GameScreen> {
     startNewGame();
   }
 
-  // Inicia un nuevo juego
   void startNewGame() {
-    // Lista de palabras de ejemplo (puedes agregar más)
     List<String> wordList = ['flutter', 'dart', 'mobile', 'developer'];
-
-    // Selecciona una palabra aleatoria de la lista
     String randomWord = wordList[Random().nextInt(wordList.length)];
-
-    // Inicializa el objeto Word
     currentWord = Word(word: randomWord);
-
-    // Inicializa las letras disponibles y adivinadas
-    availableLetters = List.generate(
-        26, (index) => String.fromCharCode('A'.codeUnitAt(0) + index));
-    guessedLetters = [];
-
-    // Actualiza la interfaz de usuario
+    wordInputController.clear();
     setState(() {});
   }
 
@@ -52,14 +39,25 @@ class _GameScreenState extends State<GameScreen> {
           children: [
             WordTile(word: currentWord),
             SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: buildLetterButtons(),
+            TextField(
+              controller: wordInputController,
+              decoration: InputDecoration(
+                labelText: 'Ingresa una palabra',
+              ),
+              textAlign: TextAlign.center,
             ),
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                // Reinicia el juego al hacer clic en el botón
+                // Procesa la palabra ingresada por el usuario
+                processWord(wordInputController.text);
+              },
+              child: Text('Adivinar Palabra'),
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                // Reinicia el juego
                 startNewGame();
               },
               child: Text('Reiniciar Juego'),
@@ -70,39 +68,23 @@ class _GameScreenState extends State<GameScreen> {
     );
   }
 
-  // Construye los botones de letras disponibles
-  List<Widget> buildLetterButtons() {
-    return availableLetters.map((letter) {
-      return Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: ElevatedButton(
-          onPressed: () {
-            // Procesa la letra cuando se hace clic
-            processLetter(letter);
-          },
-          child: Text(letter),
-        ),
-      );
-    }).toList();
-  }
-
-  // Procesa la letra seleccionada por el usuario
-  void processLetter(String letter) {
-    // Actualiza la lista de letras disponibles y adivinadas
-    setState(() {
-      availableLetters.remove(letter);
-      guessedLetters.add(letter);
-    });
-
-    // Verifica si la letra está en la palabra objetivo
-    if (currentWord.word.contains(letter.toLowerCase())) {
-      currentWord.updateGuessedLetters(letter);
+  void processWord(String word) {
+    if (word.length == currentWord.word.length) {
+      // Verifica la palabra ingresada por el usuario
+      currentWord.updateGuessedWord(word);
+      if (currentWord.isWordGuessed()) {
+        // Aquí puedes agregar lógica adicional cuando se adivina la palabra
+        print('¡Has adivinado la palabra!');
+      }
+    } else {
+      // Aquí puedes manejar la lógica cuando la longitud de la palabra no coincide
+      print('La longitud de la palabra no coincide');
     }
 
-    // Verifica si el jugador ha adivinado la palabra
-    if (currentWord.isWordGuessed()) {
-      // Aquí puedes agregar lógica adicional cuando se adivina la palabra
-      print('¡Has adivinado la palabra!');
-    }
+    // Limpia el campo de entrada
+    wordInputController.clear();
+
+    // Actualiza la interfaz de usuario
+    setState(() {});
   }
 }
