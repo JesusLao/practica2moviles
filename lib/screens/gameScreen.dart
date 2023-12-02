@@ -1,8 +1,9 @@
 // ignore_for_file: library_private_types_in_public_api, prefer_const_constructors
 
 import 'package:flutter/material.dart';
+import 'package:practica2moviles/word/wordService.dart';
 import 'dart:math'; // Importa la biblioteca de Dart para números aleatorios
-import '../word.dart'; // Importa el modelo Word
+import '../word/word.dart'; // Importa el modelo Word
 import '../widgets/wordTile.dart'; // Importa el widget WordTile
 
 class GameScreen extends StatefulWidget {
@@ -13,20 +14,34 @@ class GameScreen extends StatefulWidget {
 }
 
 class _GameScreenState extends State<GameScreen> {
-  late Word currentWord;
+  Word currentWord = Word(word: '');
   TextEditingController wordInputController = TextEditingController();
   String feedbackMessage = '';
+  List<Word> wordList = [];
 
   @override
   void initState() {
     super.initState();
-    startNewGame();
+    _getRefreshWords();
+    //startNewGame();
+  }
+
+  void _getRefreshWords() async {
+    final data = await WordService.loadWords();
+    setState(() {
+      wordList = data;
+      startNewGame();
+    });
   }
 
   void startNewGame() {
-    List<String> wordList = ['flutter', 'dart', 'mobile', 'developer'];
-    String randomWord = wordList[Random().nextInt(wordList.length)];
-    currentWord = Word(word: randomWord);
+    // WordService.insertCharacter(Word(word: "Tupac"));
+    // final data = await WordService.loadCharacters();
+    // setState(() {
+    //   wordList = data;
+    // });
+    Word randomWord = wordList[Random().nextInt(wordList.length)];
+    currentWord = randomWord;
     wordInputController.clear();
     setState(() {});
   }

@@ -1,8 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:practica2moviles/word/word.dart';
+import 'package:practica2moviles/word/wordService.dart';
 import 'screens/homeScreen.dart';
 
-void main() {
+void main() async {
   runApp(const MyApp());
+  // WordService.db();
+  // var characters = await WordService.loadWords();
+  // print(characters);
+
+  // WordService.insertCharacter(Word(word: "madre"));
+  // WordService.insertCharacter(Word(word: "hijo"));
+  // WordService.insertCharacter(Word(word: "ir"));
+  // WordService.insertCharacter(Word(word: "regadera"));
+  // WordService.insertCharacter(Word(word: "camara"));
+  // WordService.insertCharacter(Word(word: "lampara"));
 }
 
 class MyApp extends StatelessWidget {

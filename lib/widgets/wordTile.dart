@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../word.dart';
+import '../word/word.dart';
 
 class WordTile extends StatelessWidget {
   final Word word;

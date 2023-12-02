@@ -5,6 +5,12 @@ class Word {
   Word({required this.word, List<String>? guessedLetters})
       : guessedLetters = guessedLetters ?? [];
 
+  Map<String, dynamic> toMap() {
+    return {
+      'word': word,
+    };
+  }
+
   List<String> getDisplayWord() {
     return word.split('').map((letter) {
       return guessedLetters.contains(letter.toLowerCase()) ? letter : '_';
@@ -32,5 +38,10 @@ class Word {
   bool isLetterInCorrectPosition(int index, String letter) {
     return word.length > index &&
         word[index].toLowerCase() == letter.toLowerCase();
+  }
+
+  @override
+  String toString() {
+    return 'Word{word: $word}';
   }
 }
