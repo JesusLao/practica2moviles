@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:practica2moviles/accounts/account.dart';
+import 'package:practica2moviles/accounts/accountService.dart';
 import 'package:practica2moviles/word/word.dart';
 import 'package:practica2moviles/word/wordService.dart';
 import 'screens/homeScreen.dart';
 
 void main() async {
   runApp(const MyApp());
+
+  // AccountService.db();
+  // var characters = await AccountService.loadAccounts();
+  // print(characters);
+
   // WordService.db();
   // var characters = await WordService.loadWords();
   // print(characters);
