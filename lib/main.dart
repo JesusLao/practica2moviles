@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const HomeScreen(), // Establece HomeScreen como la pantalla inicial
+      home: HomeScreen(), // Establece HomeScreen como la pantalla inicial
     );
   }
 }

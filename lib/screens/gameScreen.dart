@@ -1,13 +1,16 @@
 // ignore_for_file: library_private_types_in_public_api, prefer_const_constructors
 
 import 'package:flutter/material.dart';
+import 'package:practica2moviles/accounts/account.dart';
+import 'package:practica2moviles/accounts/accountService.dart';
 import 'package:practica2moviles/word/wordService.dart';
 import 'dart:math'; // Importa la biblioteca de Dart para números aleatorios
 import '../word/word.dart'; // Importa el modelo Word
 import '../widgets/wordTile.dart'; // Importa el widget WordTile
 
 class GameScreen extends StatefulWidget {
-  const GameScreen({super.key});
+  final Account accountLogged;
+  const GameScreen({Key? key, required this.accountLogged}) : super(key: key);
 
   @override
   _GameScreenState createState() => _GameScreenState();
@@ -18,6 +21,7 @@ class _GameScreenState extends State<GameScreen> {
   TextEditingController wordInputController = TextEditingController();
   String feedbackMessage = '';
   List<Word> wordList = [];
+  int trys = 0;
 
   @override
   void initState() {
@@ -35,13 +39,9 @@ class _GameScreenState extends State<GameScreen> {
   }
 
   void startNewGame() {
-    // WordService.insertCharacter(Word(word: "Tupac"));
-    // final data = await WordService.loadCharacters();
-    // setState(() {
-    //   wordList = data;
-    // });
     Word randomWord = wordList[Random().nextInt(wordList.length)];
     currentWord = randomWord;
+    trys = 0;
     wordInputController.clear();
     setState(() {});
   }
@@ -70,6 +70,11 @@ class _GameScreenState extends State<GameScreen> {
                     ),
                   )
                 : Container(),
+            const SizedBox(height: 20),
+            Text(
+              'Intentos: $trys',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
             SizedBox(height: 20),
             TextField(
               controller: wordInputController,
@@ -106,13 +111,19 @@ class _GameScreenState extends State<GameScreen> {
     if (word.length == currentWord.word.length) {
       // Verifica la palabra ingresada por el usuario
       currentWord.updateGuessedWord(word);
+      trys += 1;
       if (currentWord.isWordGuessed()) {
         // Aquí puedes agregar lógica adicional cuando se adivina la palabra
         feedbackMessage = '¡Has adivinado la palabra!';
+        if (widget.accountLogged.trys == null ||
+            widget.accountLogged.trys! < trys) {
+          widget.accountLogged.trys = trys;
+          AccountService.updateAccount(widget.accountLogged);
+        }
       }
     } else {
       // Aquí puedes manejar la lógica cuando la longitud de la palabra no coincide
-
+      trys += 1;
       feedbackMessage = 'La longitud de la palabra no coincide.';
     }
 

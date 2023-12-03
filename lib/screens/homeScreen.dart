@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
-import 'gameScreen.dart'; // Importa la pantalla del juego
+import 'package:practica2moviles/accounts/account.dart';
+import 'package:practica2moviles/accounts/accountService.dart';
+import 'gameScreen.dart';
+import 'package:collection/collection.dart';
 
+// ignore: must_be_immutable
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+  HomeScreen({Key? key});
+
+  late Account accountLogged;
 
   @override
   Widget build(BuildContext context) {
@@ -20,29 +26,158 @@ class HomeScreen extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {
-                // Navegar a la pantalla de inicio de sesión al hacer clic en el botón
-                Navigator.push(
+              onPressed: () async {
+                final loggedInAccount = await Navigator.push<Account?>(
                   context,
                   MaterialPageRoute(builder: (context) => const LoginScreen()),
                 );
+                onLogin(context, loggedInAccount);
               },
               child: const Text('Iniciar Sesión'),
             ),
             const SizedBox(height: 10),
             ElevatedButton(
-              onPressed: () {
-                // Navegar a la pantalla de registro al hacer clic en el botón
-                Navigator.push(
+              onPressed: () async {
+                final signedUpAccount = await Navigator.push<Account?>(
                   context,
                   MaterialPageRoute(builder: (context) => const SignUpScreen()),
                 );
+                onSignUp(context, signedUpAccount);
               },
               child: const Text('Registrarse'),
+            ),
+            const SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: () async {
+                final rankedAccounts =
+                    await AccountService.loadRankedAccounts();
+                showRankingDialog(context, rankedAccounts);
+              },
+              child: const Text('Ver Ranking'),
             ),
           ],
         ),
       ),
+    );
+  }
+
+  void onLogin(BuildContext context, Account? loggedInAccount) async {
+    if (loggedInAccount != null) {
+      // Verificar si la cuenta existe en la base de datos
+      final accounts = await AccountService.loadAccounts();
+      final existingAccount = accounts
+          .firstWhereOrNull((account) => account.mail == loggedInAccount.mail);
+
+      if (existingAccount != null) {
+        accountLogged = existingAccount;
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => GameScreen(
+                    accountLogged: accountLogged,
+                  )),
+        );
+      } else {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Error de inicio de sesión'),
+              content: const Text(
+                  'La cuenta no existe o las credenciales son incorrectas.'),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
+      }
+    }
+  }
+
+  void onSignUp(BuildContext context, Account? signedUpAccount) async {
+    if (signedUpAccount != null) {
+      // Verificar si la cuenta ya existe en la base de datos
+      final accounts = await AccountService.loadAccounts();
+      final existingAccount = accounts
+          .firstWhereOrNull((account) => account.mail == signedUpAccount.mail);
+
+      if (existingAccount == null) {
+        accountLogged = signedUpAccount;
+        // Insertar la nueva cuenta en la base de datos
+        await AccountService.insertAccount(signedUpAccount);
+
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => GameScreen(
+                    accountLogged: accountLogged,
+                  )),
+        );
+      } else {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Error de registro'),
+              content: const Text(
+                  'La cuenta ya existe. Por favor, utiliza otro correo electrónico.'),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
+      }
+    }
+  }
+
+  void showRankingDialog(BuildContext context, List<Account> rankedAccounts) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Ranking de Mejores Intentos'),
+          content: SizedBox(
+            width: double.maxFinite,
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: rankedAccounts.length,
+              itemBuilder: (BuildContext context, int index) {
+                return ListTile(
+                  title: Text(
+                    '${index + 1}. ${rankedAccounts[index].user}',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: index < 3 ? Colors.green : Colors.black,
+                    ),
+                  ),
+                  subtitle:
+                      Text('Intentos: ${rankedAccounts[index].trys ?? 0}'),
+                );
+              },
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
     );
   }
 }
@@ -61,24 +196,23 @@ class LoginScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            TextField(
-              decoration:
-                  const InputDecoration(labelText: 'Correo Electrónico'),
+            const TextField(
+              decoration: InputDecoration(labelText: 'Correo Electrónico'),
             ),
             const SizedBox(height: 10),
-            TextField(
+            const TextField(
               obscureText: true,
-              decoration: const InputDecoration(labelText: 'Contraseña'),
+              decoration: InputDecoration(labelText: 'Contraseña'),
             ),
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                // Aquí deberías agregar la lógica de autenticación real
-                // Puedes redirigir a la pantalla del juego si la autenticación es exitosa
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const GameScreen()),
-                );
+                Navigator.pop(
+                    context,
+                    Account(
+                        mail: 'correo@example.com',
+                        user: 'Usuario',
+                        password: 'contraseña'));
               },
               child: const Text('Iniciar Sesión'),
             ),
@@ -103,28 +237,27 @@ class SignUpScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            TextField(
-              decoration: const InputDecoration(labelText: 'Nombre de Usuario'),
+            const TextField(
+              decoration: InputDecoration(labelText: 'Nombre de Usuario'),
             ),
             const SizedBox(height: 10),
-            TextField(
-              decoration:
-                  const InputDecoration(labelText: 'Correo Electrónico'),
+            const TextField(
+              decoration: InputDecoration(labelText: 'Correo Electrónico'),
             ),
             const SizedBox(height: 10),
-            TextField(
+            const TextField(
               obscureText: true,
-              decoration: const InputDecoration(labelText: 'Contraseña'),
+              decoration: InputDecoration(labelText: 'Contraseña'),
             ),
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                // Aquí deberías agregar la lógica de registro real
-                // Puedes redirigir a la pantalla del juego si el registro es exitoso
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const GameScreen()),
-                );
+                Navigator.pop(
+                    context,
+                    Account(
+                        mail: 'correo@example.com',
+                        user: 'Usuario',
+                        password: 'contraseña'));
               },
               child: const Text('Registrarse'),
             ),

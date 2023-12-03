@@ -73,4 +73,41 @@ class AccountService {
       return null;
     }
   }
+
+  static Future<Account?> updateAccount(Account account) async {
+    final existingAccount = await findAccount(account);
+
+    // Si la cuenta no existe, no se puede actualizar
+    if (existingAccount == null) {
+      return null;
+    }
+
+    // Actualiza la cuenta en la base de datos
+    final connection = await db();
+    await connection.update(
+      'Accounts',
+      account.toMap(),
+      where: 'mail = ?',
+      whereArgs: [account.mail],
+    );
+
+    // Devuelve la cuenta actualizada
+    return account;
+  }
+
+  static Future<List<Account>> loadRankedAccounts() async {
+    final connection = await db();
+    final List<Map<String, dynamic>> maps = await connection.query(
+      'Accounts',
+      orderBy: 'trys ASC', // Ordena por trys en orden ascendente
+    );
+    return List.generate(maps.length, (i) {
+      return Account(
+        mail: maps[i]['mail'] as String,
+        user: maps[i]['user'] as String,
+        password: maps[i]['password'] as String,
+        trys: maps[i]['trys'] as int?,
+      );
+    });
+  }
 }

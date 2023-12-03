@@ -2,7 +2,7 @@ class Account {
   final String user;
   final String mail;
   final String password;
-  final int? trys;
+  int? trys;
 
   Account({
     required this.user,
