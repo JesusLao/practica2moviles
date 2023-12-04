@@ -187,6 +187,9 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    TextEditingController emailController = TextEditingController();
+    TextEditingController passwordController = TextEditingController();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Iniciar Sesión'),
@@ -196,23 +199,49 @@ class LoginScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const TextField(
-              decoration: InputDecoration(labelText: 'Correo Electrónico'),
+            TextField(
+              controller: emailController,
+              decoration:
+                  const InputDecoration(labelText: 'Correo Electrónico'),
             ),
             const SizedBox(height: 10),
-            const TextField(
+            TextField(
+              controller: passwordController,
               obscureText: true,
-              decoration: InputDecoration(labelText: 'Contraseña'),
+              decoration: const InputDecoration(labelText: 'Contraseña'),
             ),
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                Navigator.pop(
+                String email = emailController.text;
+                String password = passwordController.text;
+
+                if (email.isNotEmpty && password.isNotEmpty) {
+                  Navigator.pop(
                     context,
-                    Account(
-                        mail: 'correo@example.com',
-                        user: 'Usuario',
-                        password: 'contraseña'));
+                    Account(mail: email, user: '', password: password),
+                  );
+                } else {
+                  // Puedes mostrar un mensaje de error si los campos no están completos
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Text('Error de Inicio de Sesión'),
+                        content:
+                            const Text('Por favor, completa todos los campos.'),
+                        actions: <Widget>[
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text('OK'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                }
               },
               child: const Text('Iniciar Sesión'),
             ),
@@ -228,6 +257,10 @@ class SignUpScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    TextEditingController usernameController = TextEditingController();
+    TextEditingController emailController = TextEditingController();
+    TextEditingController passwordController = TextEditingController();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Registrarse'),
@@ -237,27 +270,57 @@ class SignUpScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const TextField(
-              decoration: InputDecoration(labelText: 'Nombre de Usuario'),
+            TextField(
+              controller: usernameController,
+              decoration: const InputDecoration(labelText: 'Nombre de Usuario'),
             ),
             const SizedBox(height: 10),
-            const TextField(
-              decoration: InputDecoration(labelText: 'Correo Electrónico'),
+            TextField(
+              controller: emailController,
+              decoration:
+                  const InputDecoration(labelText: 'Correo Electrónico'),
             ),
             const SizedBox(height: 10),
-            const TextField(
+            TextField(
+              controller: passwordController,
               obscureText: true,
-              decoration: InputDecoration(labelText: 'Contraseña'),
+              decoration: const InputDecoration(labelText: 'Contraseña'),
             ),
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                Navigator.pop(
+                String username = usernameController.text;
+                String email = emailController.text;
+                String password = passwordController.text;
+
+                if (username.isNotEmpty &&
+                    email.isNotEmpty &&
+                    password.isNotEmpty) {
+                  Navigator.pop(
                     context,
-                    Account(
-                        mail: 'correo@example.com',
-                        user: 'Usuario',
-                        password: 'contraseña'));
+                    Account(mail: email, user: username, password: password),
+                  );
+                } else {
+                  // Puedes mostrar un mensaje de error si los campos no están completos
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Text('Error de Registro'),
+                        content:
+                            const Text('Por favor, completa todos los campos.'),
+                        actions: <Widget>[
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text('OK'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                }
               },
               child: const Text('Registrarse'),
             ),
