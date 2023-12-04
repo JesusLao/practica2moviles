@@ -1,14 +1,19 @@
 class Word {
   String word;
+  String desc;
+  String image;
   List<String> guessedLetters;
 
-  Word({required this.word, List<String>? guessedLetters})
-      : guessedLetters = guessedLetters ?? [];
+  Word(
+      {required this.word,
+      required this.desc,
+      String? image,
+      List<String>? guessedLetters})
+      : guessedLetters = guessedLetters ?? [],
+        image = image ?? "";
 
   Map<String, dynamic> toMap() {
-    return {
-      'word': word,
-    };
+    return {'word': word, 'desc': desc, 'image': image};
   }
 
   List<String> getDisplayWord() {
@@ -42,6 +47,6 @@ class Word {
 
   @override
   String toString() {
-    return 'Word{word: $word}';
+    return 'Word1{word: $word, desc: $desc, image: $image}';
   }
 }

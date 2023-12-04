@@ -3,6 +3,7 @@ import 'package:practica2moviles/accounts/account.dart';
 import 'package:practica2moviles/accounts/accountService.dart';
 import 'gameScreen.dart';
 import 'package:collection/collection.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 // ignore: must_be_immutable
 class HomeScreen extends StatelessWidget {
@@ -13,49 +14,53 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Wordle Game'),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text(
-              'Bienvenido a Wordle!',
-              style: TextStyle(fontSize: 24),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () async {
-                final loggedInAccount = await Navigator.push<Account?>(
-                  context,
-                  MaterialPageRoute(builder: (context) => const LoginScreen()),
-                );
-                onLogin(context, loggedInAccount);
-              },
-              child: const Text('Iniciar Sesión'),
-            ),
-            const SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: () async {
-                final signedUpAccount = await Navigator.push<Account?>(
-                  context,
-                  MaterialPageRoute(builder: (context) => const SignUpScreen()),
-                );
-                onSignUp(context, signedUpAccount);
-              },
-              child: const Text('Registrarse'),
-            ),
-            const SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: () async {
-                final rankedAccounts =
-                    await AccountService.loadRankedAccounts();
-                showRankingDialog(context, rankedAccounts);
-              },
-              child: const Text('Ver Ranking'),
-            ),
-          ],
+      body: Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage(
+                "assets/Inicio_GIF.png"), // Reemplaza con la ruta correcta de tu imagen
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const SizedBox(height: 400),
+              ElevatedButton(
+                onPressed: () async {
+                  final loggedInAccount = await Navigator.push<Account?>(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const LoginScreen()),
+                  );
+                  onLogin(context, loggedInAccount);
+                },
+                child: const Text('Iniciar Sesión'),
+              ),
+              const SizedBox(height: 10),
+              ElevatedButton(
+                onPressed: () async {
+                  final signedUpAccount = await Navigator.push<Account?>(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const SignUpScreen()),
+                  );
+                  onSignUp(context, signedUpAccount);
+                },
+                child: const Text('Registrarse'),
+              ),
+              const SizedBox(height: 10),
+              ElevatedButton(
+                onPressed: () async {
+                  final rankedAccounts =
+                      await AccountService.loadRankedAccounts();
+                  showRankingDialog(context, rankedAccounts);
+                },
+                child: const Text('Ver Ranking'),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -193,59 +198,73 @@ class LoginScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Iniciar Sesión'),
+        backgroundColor: Colors
+            .transparent, // Establece el color de fondo de la AppBar como transparente
+        elevation: 0, // Elimina la sombra de la AppBar
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextField(
-              controller: emailController,
-              decoration:
-                  const InputDecoration(labelText: 'Correo Electrónico'),
-            ),
-            const SizedBox(height: 10),
-            TextField(
-              controller: passwordController,
-              obscureText: true,
-              decoration: const InputDecoration(labelText: 'Contraseña'),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                String email = emailController.text;
-                String password = passwordController.text;
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/fondo.jpg'), // Ruta de la imagen de fondo
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              TextField(
+                controller: emailController,
+                decoration: const InputDecoration(
+                    labelText: 'Correo Electrónico',
+                    labelStyle: TextStyle(color: Colors.white)),
+              ),
+              const SizedBox(height: 10),
+              TextField(
+                controller: passwordController,
+                obscureText: true,
+                decoration: const InputDecoration(
+                    labelText: 'Contraseña',
+                    labelStyle: TextStyle(color: Colors.white)),
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  String email = emailController.text;
+                  String password = passwordController.text;
 
-                if (email.isNotEmpty && password.isNotEmpty) {
-                  Navigator.pop(
-                    context,
-                    Account(mail: email, user: '', password: password),
-                  );
-                } else {
-                  // Puedes mostrar un mensaje de error si los campos no están completos
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: const Text('Error de Inicio de Sesión'),
-                        content:
-                            const Text('Por favor, completa todos los campos.'),
-                        actions: <Widget>[
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            child: const Text('OK'),
-                          ),
-                        ],
-                      );
-                    },
-                  );
-                }
-              },
-              child: const Text('Iniciar Sesión'),
-            ),
-          ],
+                  if (email.isNotEmpty && password.isNotEmpty) {
+                    Navigator.pop(
+                      context,
+                      Account(mail: email, user: '', password: password),
+                    );
+                  } else {
+                    // Puedes mostrar un mensaje de error si los campos no están completos
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: const Text('Error de Inicio de Sesión'),
+                          content: const Text(
+                              'Por favor, completa todos los campos.'),
+                          actions: <Widget>[
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text('OK'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  }
+                },
+                child: const Text('Iniciar Sesión'),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -265,66 +284,88 @@ class SignUpScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Registrarse'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextField(
-              controller: usernameController,
-              decoration: const InputDecoration(labelText: 'Nombre de Usuario'),
-            ),
-            const SizedBox(height: 10),
-            TextField(
-              controller: emailController,
-              decoration:
-                  const InputDecoration(labelText: 'Correo Electrónico'),
-            ),
-            const SizedBox(height: 10),
-            TextField(
-              controller: passwordController,
-              obscureText: true,
-              decoration: const InputDecoration(labelText: 'Contraseña'),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                String username = usernameController.text;
-                String email = emailController.text;
-                String password = passwordController.text;
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage(
+                'assets/fondo.jpg'), // Reemplaza 'assets/background_image.jpg' con la ruta de tu imagen
+            fit: BoxFit
+                .cover, // Puedes ajustar cómo la imagen cubre el contenedor
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              TextField(
+                controller: usernameController,
+                decoration: const InputDecoration(
+                  labelText: 'Nombre de Usuario',
+                  labelStyle: TextStyle(color: Colors.white),
+                ),
+              ),
+              const SizedBox(height: 10),
+              TextField(
+                controller: emailController,
+                decoration: const InputDecoration(
+                  labelText: 'Correo Electrónico',
+                  labelStyle: TextStyle(color: Colors.white),
+                ),
+              ),
+              const SizedBox(height: 10),
+              TextField(
+                controller: passwordController,
+                obscureText: true,
+                decoration: const InputDecoration(
+                  labelText: 'Contraseña',
+                  labelStyle: TextStyle(color: Colors.white),
+                ),
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  String username = usernameController.text;
+                  String email = emailController.text;
+                  String password = passwordController.text;
 
-                if (username.isNotEmpty &&
-                    email.isNotEmpty &&
-                    password.isNotEmpty) {
-                  Navigator.pop(
-                    context,
-                    Account(mail: email, user: username, password: password),
-                  );
-                } else {
-                  // Puedes mostrar un mensaje de error si los campos no están completos
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: const Text('Error de Registro'),
-                        content:
-                            const Text('Por favor, completa todos los campos.'),
-                        actions: <Widget>[
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            child: const Text('OK'),
-                          ),
-                        ],
-                      );
-                    },
-                  );
-                }
-              },
-              child: const Text('Registrarse'),
-            ),
-          ],
+                  if (username.isNotEmpty &&
+                      email.isNotEmpty &&
+                      password.isNotEmpty) {
+                    Navigator.pop(
+                      context,
+                      Account(
+                        mail: email,
+                        user: username,
+                        password: password,
+                      ),
+                    );
+                  } else {
+                    // Puedes mostrar un mensaje de error si los campos no están completos
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: const Text('Error de Registro'),
+                          content: const Text(
+                              'Por favor, completa todos los campos.'),
+                          actions: <Widget>[
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text('OK'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  }
+                },
+                child: const Text('Registrarse'),
+              ),
+            ],
+          ),
         ),
       ),
     );
